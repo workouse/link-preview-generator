@@ -9,8 +9,6 @@
   ],
   "require": {
     "symfony/templating": "^3.4|^4.3",
-    "symfony/dom-crawler": "^3.4|^4.3",
-    "symfony/css-selector": "^3.4|^4.3",
     "symfony/http-client": "^3.4|^4.3",
     "ext-dom": "*"
   },

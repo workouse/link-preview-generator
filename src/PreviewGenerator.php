@@ -6,8 +6,8 @@ namespace Workouse\LinkPreviewGenerator;
 
 use DOMDocument;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class PreviewGenerator implements PreviewGeneratorInterface
 {
@@ -35,7 +35,10 @@ class PreviewGenerator implements PreviewGeneratorInterface
     {
         $anchors = $this->findAnchors($html);
         foreach ($anchors as $anchor) {
-            $html = str_replace($anchor, $this->getNewTemplate($this->getLink($anchor)), $html);
+            $newTemplate = $this->getNewTemplate($this->getLink($anchor));
+            if ($newTemplate) {
+                $html = str_replace($anchor, $this->getNewTemplate($this->getLink($anchor)), $html);
+            }
         }
         return $html;
     }
@@ -61,14 +64,29 @@ class PreviewGenerator implements PreviewGeneratorInterface
 
     private function getNewTemplate(string $url): string
     {
-        $response = $this->client->request('GET', $url);
-        $crawler = new Crawler($response->getContent());
-        return $this->templating->render($this->templateName, ['tag' => [
-            'title' => $crawler->filterXpath("//meta[@property='og:title']")->extract(['content'])[0],
-            'image' => $crawler->filterXpath("//meta[@property='og:image']")->extract(['content'])[0],
-            'description' => $crawler->filterXpath("//meta[@property='og:description']")->extract(['content'])[0],
-            'url' => $url,
-        ]]);
+        try {
+            $response = $this->client->request('GET', $url);
+            $headers = $response->getHeaders();
+        } catch (TransportExceptionInterface $e) {
+            return false;
+        }
+
+        $doc = new DomDocument();
+        @$doc->loadHTML($response->getContent());
+        $xpath = new \DOMXPath($doc);
+        $query = '//*/meta';
+        $metas = $xpath->query($query);
+        $rmetas = [];
+        foreach ($metas as $meta) {
+            $property = $meta->getAttribute('property');
+            $content = $meta->getAttribute('content');
+            if (!empty($property) && preg_match('#^og:#', $property)) {
+                $rmetas[str_replace(':', '_', $property)] = $content;
+            }
+        }
+
+        return $this->templating->render($this->templateName, ['tag' => $rmetas]);
+
     }
 
 }
