@@ -45,7 +45,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
 
     private function findAnchors(string $html): array
     {
-        preg_match_all('/((<a href="([^"]*)"?([^\>]+)>(.*)<\/a>))/', $html, $matches);
+        preg_match_all('/((<a ?([^\>]+)href="([^"]*)"?([^\>]+)>(.*)<\/a>))/', $html, $matches);
 
         return array_filter(array_values(array_unique($matches[0])), function ($anchor) {
             if (strstr($anchor, $this->cssSelector)) {
