@@ -71,17 +71,27 @@ class PreviewGenerator implements PreviewGeneratorInterface
             return false;
         }
 
-        $doc = new DomDocument();
-        @$doc->loadHTML($response->getContent());
-        $xpath = new \DOMXPath($doc);
-        $query = '//*/meta';
-        $metas = $xpath->query($query);
+        $dom = new DomDocument();
+        @$dom->loadHTML($response->getContent());
+        $metas = $dom->getElementsByTagName('meta');
         $rmetas = [];
         foreach ($metas as $meta) {
-            $property = $meta->getAttribute('property');
+            $property = !empty($meta->getAttribute('property')) ? $meta->getAttribute('property') : $meta->getAttribute('itemprop');
             $content = $meta->getAttribute('content');
-            if (!empty($property) && preg_match('#^og:#', $property)) {
+            if (!empty($property)) {
                 $rmetas[str_replace(':', '_', $property)] = $content;
+            }
+        }
+
+        $pageTitle = $dom->getElementsByTagName('title')->item(0);
+        if ($pageTitle) {
+            $rmetas['title'] = $dom->getElementsByTagName('title')->item(0)->textContent;
+        }
+
+        if (!array_key_exists('image', $rmetas) && !array_key_exists('og_image', $rmetas)) {
+            $firstImg = $dom->getElementsByTagName('img')->item(0);
+            if ($firstImg) {
+                $rmetas['image'] = $firstImg->getAttribute('src');
             }
         }
 
