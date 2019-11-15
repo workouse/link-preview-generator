@@ -1,6 +1,7 @@
 {
   "name": "workouse/link-preview-generator",
   "type": "library",
+  "description": "Link preview generator",
   "authors": [
     {
       "name": "Ömer Büyükçelik",
