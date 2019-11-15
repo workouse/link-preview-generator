@@ -3,6 +3,9 @@
   <a href="https://twitter.com/workouse" target="_blank">
     <img alt="Twitter: workouse" src="https://img.shields.io/twitter/follow/workouse.svg?style=social" />
   </a>
+  <a href="https://travis-ci.com/workouse/link-preview-generator" target="_blank">
+      <img alt="Travis CI: workouse" src="https://travis-ci.com/workouse/link-preview-generator.svg?branch=master" />
+  </a>
 </p>
 
 ## Install
