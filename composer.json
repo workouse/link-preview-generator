@@ -2,6 +2,7 @@
   "name": "workouse/link-preview-generator",
   "type": "library",
   "description": "Link preview generator",
+  "license": "MIT",
   "authors": [
     {
       "name": "Ömer Büyükçelik",
