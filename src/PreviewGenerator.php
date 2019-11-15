@@ -43,7 +43,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
         return $html;
     }
 
-    private function findAnchors(string $html): array
+    public function findAnchors(string $html): array
     {
         preg_match_all('/((<a ?([^\>]+)href="([^"]*)"?([^\>]+)>(.*)<\/a>))/', $html, $matches);
 
@@ -54,7 +54,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
         });
     }
 
-    private function getLink(string $anchor): string
+    public function getLink(string $anchor): string
     {
         $dom = new DOMDocument;
         $dom->loadHTML($anchor);
@@ -62,7 +62,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
         return $link->getAttribute('href');
     }
 
-    private function getNewTemplate(string $url): string
+    public function getNewTemplate(string $url): string
     {
         try {
             $response = $this->client->request('GET', $url);
