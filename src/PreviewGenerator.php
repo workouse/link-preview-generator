@@ -95,6 +95,8 @@ class PreviewGenerator implements PreviewGeneratorInterface
             }
         }
 
+        $rmetas['url'] = $url;
+
         return $this->templating->render($this->templateName, ['tag' => $rmetas]);
 
     }
