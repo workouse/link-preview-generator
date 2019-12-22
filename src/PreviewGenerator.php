@@ -68,6 +68,7 @@ class PreviewGenerator implements PreviewGeneratorInterface
             $response = $this->client->request('GET', $url);
             $headers = $response->getHeaders();
         } catch (TransportExceptionInterface $e) {
+            syslog(LOG_ERR,$e->getMessage());
             return false;
         }
 
